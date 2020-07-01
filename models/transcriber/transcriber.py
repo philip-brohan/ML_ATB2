@@ -29,7 +29,7 @@ if nImagesInEpoch is None:
 
 # Dataset parameters
 bufferSize = 100  # Shouldn't make much difference
-batchSize = 10  # Bigger is faster, but takes more memory, and probably is less accurate
+batchSize = 1  # Bigger is faster, but takes more memory, and probably is less accurate
 
 # Set up the training data
 imageData = getImageDataset(purpose="training", nImages=nTrainingImages).repeat()
