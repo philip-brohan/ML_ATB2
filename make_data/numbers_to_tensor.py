@@ -52,6 +52,8 @@ for yri in range(10):
     for mni in range(12):
         inr += mdata[yri][mni][0] + mdata[yri][mni][1] / 10 + mdata[yri][mni][2] / 100
     inr = int(inr * 100)
+    if inr > 9999: 
+        inr=0
     for dgt in [int(x) for x in "%04d" % inr]:
         target[idx, dgt] = 1.0
         idx += 1

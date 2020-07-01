@@ -16,7 +16,7 @@ parser.add_argument("--docn", help="Document name", type=str, required=True)
 args = parser.parse_args()
 
 # Load the image as data
-image = Image.open("%s/OCR-fake/%s.png" % (os.getenv("SCRATCH"), args.docn))
+image = Image.open("%s/OCR-fake/images/%s.png" % (os.getenv("SCRATCH"), args.docn))
 
 # Output the tensor
 opdir = "%s/ML_ATB2/tensors/images/" % os.getenv("SCRATCH")
