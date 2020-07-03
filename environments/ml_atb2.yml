@@ -8,6 +8,8 @@ dependencies:
   - pillow=7.1.*
   - matplotlib=3.2.*
   - pdf2image=1.13.*
+# Documentation formatter
+  - sphinx=3.1.*
 # Optional, code formatter
   - black
 # Optional, tensorboard and profiler
