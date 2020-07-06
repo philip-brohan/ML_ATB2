@@ -8,12 +8,13 @@ import tensorflow as tf
 import pickle
 import numpy
 
-# Load the model specification
-from transcriberModel import transcriberModel
-
 # Load the data source providers
+sys.path.append("%s/../dataset" % os.path.dirname(__file__))
 from makeDataset import getImageDataset
 from makeDataset import getNumbersDataset
+
+# Load the model specification
+from transcriberModel import transcriberModel
 
 # How many images to use?
 nTrainingImages = 9000  # Max is 9000
@@ -54,10 +55,9 @@ history["val_loss"] = []
 
 class CustomSaver(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
-        save_dir = ("%s/ML_ATB2/models/transcriber/" + "Epoch_%04d") % (
-            os.getenv("SCRATCH"),
-            epoch,
-        )
+        save_dir = (
+            "%s/ML_ATB2/models/deep_convolutional_transcriber/" + "Epoch_%04d"
+        ) % (os.getenv("SCRATCH"), epoch,)
         if not os.path.isdir(save_dir):
             os.makedirs(save_dir)
         self.model.save_weights("%s/ckpt" % save_dir)

@@ -17,6 +17,8 @@ from matplotlib.lines import Line2D
 
 sys.path.append("%s/../" % os.path.dirname(__file__))
 from transcriberModel import transcriberModel
+
+sys.path.append("%s/../../dataset" % os.path.dirname(__file__))
 from makeDataset import getImageDataset
 from makeDataset import getNumbersDataset
 
@@ -31,9 +33,10 @@ args = parser.parse_args()
 
 # Set up the model and load the weights at the chosen epoch
 transcriber = transcriberModel()
-weights_dir = (
-    "%s/ML_ATB2/models/transcriber/" + "Epoch_%04d"
-) % (os.getenv("SCRATCH"), args.epoch - 1,)
+weights_dir = ("%s/ML_ATB2/models/deep_convolutional_transcriber/" + "Epoch_%04d") % (
+    os.getenv("SCRATCH"),
+    args.epoch - 1,
+)
 load_status = transcriber.load_weights("%s/ckpt" % weights_dir)
 # Check the load worked
 load_status.assert_existing_objects_matched()
@@ -343,9 +346,7 @@ for mni in range(12):
     for dgi in range(3):
         originalDigit = numpy.where(orig[0, tidx, :] == 1.0)[0]
         dgProbabilities = trnb[0, tidx, :]
-        bestTranscribed = numpy.where(
-            dgProbabilities == numpy.amax(dgProbabilities)
-        )[0]
+        bestTranscribed = numpy.where(dgProbabilities == numpy.amax(dgProbabilities))[0]
         colour = "red"
         if bestTranscribed == originalDigit:
             colour = "blue"
@@ -371,9 +372,7 @@ for yri in range(10):
     for dgi in range(4):
         originalDigit = numpy.where(orig[0, tidx, :] == 1.0)[0]
         dgProbabilities = trnb[0, tidx, :]
-        bestTranscribed = numpy.where(
-            dgProbabilities == numpy.amax(dgProbabilities)
-        )[0]
+        bestTranscribed = numpy.where(dgProbabilities == numpy.amax(dgProbabilities))[0]
         colour = "red"
         if bestTranscribed == originalDigit:
             colour = "blue"
