@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functions that package all the benchmark tensors as tf.data.Datasets &#8212; Auto-transcription benchmark 2: ML approaches</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="A deep convolutional transcriber" href="../models/deep_convolutional_transcriber/index.html" />
+    <link rel="prev" title="Script to convert all the benchmark examples to tf.tensors" href="convert_all.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../models/deep_convolutional_transcriber/index.html" title="A deep convolutional transcriber"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="convert_all.html" title="Script to convert all the benchmark examples to tf.tensors"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ML_ATB2</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../prepare_data.html" accesskey="U">Process benchmark data into tensors for model building</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions that package all the benchmark tensors as tf.data.Datasets</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="functions-that-package-all-the-benchmark-tensors-as-tf-data-datasets">
+<h1>Functions that package all the benchmark tensors as tf.data.Datasets<a class="headerlink" href="#functions-that-package-all-the-benchmark-tensors-as-tf-data-datasets" title="Permalink to this headline">¶</a></h1>
+<p>Call these functions in the ML model fitting script - they output <a class="reference external" href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset">TensorFlow Datasets</a> which can be used directly in model fitting.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make tf.data.Datasets from the ATB2 fake image tensors and numbers tensors</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="c1"># Load an image tensor from a file</span>
+<span class="k">def</span> <span class="nf">load_image_tensor</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="n">sict</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="n">imt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">parse_tensor</span><span class="p">(</span><span class="n">sict</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">imt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">imt</span><span class="p">,</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">imt</span>
+
+
+<span class="c1"># Load an numbers tensor from a file</span>
+<span class="k">def</span> <span class="nf">load_numbers_tensor</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="n">sict</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="n">imt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">parse_tensor</span><span class="p">(</span><span class="n">sict</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">imt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">imt</span><span class="p">,</span> <span class="p">[</span><span class="mi">436</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">imt</span>
+
+
+<span class="c1"># Get an image tensors dataset - for &#39;training&#39; or &#39;test&#39;.</span>
+<span class="c1">#  Optionally specify how many images to use.</span>
+<span class="k">def</span> <span class="nf">getImageDataset</span><span class="p">(</span><span class="n">purpose</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">,</span> <span class="n">nImages</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="c1"># Get a list of filenames containing image tensors</span>
+    <span class="n">inFiles</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/ML_ATB2/tensors/images&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SCRATCH&quot;</span><span class="p">))</span>
+    <span class="n">splitI</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inFiles</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">purpose</span> <span class="o">==</span> <span class="s2">&quot;training&quot;</span><span class="p">:</span>
+        <span class="n">inFiles</span> <span class="o">=</span> <span class="n">inFiles</span><span class="p">[:</span><span class="n">splitI</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">purpose</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
+        <span class="n">inFiles</span> <span class="o">=</span> <span class="n">inFiles</span><span class="p">[</span><span class="n">splitI</span><span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">nImages</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inFiles</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">nImages</span><span class="p">:</span>
+            <span class="n">inFiles</span> <span class="o">=</span> <span class="n">inFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nImages</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only </span><span class="si">%d</span><span class="s2"> images available, can&#39;t provide </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inFiles</span><span class="p">),</span> <span class="n">nImages</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Create TensorFlow Dataset object from the file namelist</span>
+    <span class="n">inFiles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/ML_ATB2/tensors/images/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SCRATCH&quot;</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inFiles</span>
+    <span class="p">]</span>
+    <span class="n">tr_data</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">inFiles</span><span class="p">))</span>
+
+    <span class="c1"># Convert the Dataset from file names to file contents</span>
+    <span class="n">tr_data</span> <span class="o">=</span> <span class="n">tr_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+        <span class="n">load_image_tensor</span><span class="p">,</span> <span class="n">num_parallel_calls</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">AUTOTUNE</span>
+    <span class="p">)</span>
+    <span class="c1"># Optimisation</span>
+    <span class="n">tr_data</span> <span class="o">=</span> <span class="n">tr_data</span><span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">AUTOTUNE</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tr_data</span>
+
+
+<span class="c1"># Get an numbers tensors dataset - for &#39;training&#39; or &#39;test&#39;.</span>
+<span class="c1">#  Optionally specify how many images to use.</span>
+<span class="k">def</span> <span class="nf">getNumbersDataset</span><span class="p">(</span><span class="n">purpose</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">,</span> <span class="n">nImages</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="c1"># Get a list of filenames containing numbers tensors</span>
+    <span class="n">inFiles</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/ML_ATB2/tensors/numbers&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SCRATCH&quot;</span><span class="p">))</span>
+    <span class="n">splitI</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inFiles</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">purpose</span> <span class="o">==</span> <span class="s2">&quot;training&quot;</span><span class="p">:</span>
+        <span class="n">inFiles</span> <span class="o">=</span> <span class="n">inFiles</span><span class="p">[:</span><span class="n">splitI</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">purpose</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
+        <span class="n">inFiles</span> <span class="o">=</span> <span class="n">inFiles</span><span class="p">[</span><span class="n">splitI</span><span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">nImages</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inFiles</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">nImages</span><span class="p">:</span>
+            <span class="n">inFiles</span> <span class="o">=</span> <span class="n">inFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nImages</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only </span><span class="si">%d</span><span class="s2"> numbers available, can&#39;t provide </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inFiles</span><span class="p">),</span> <span class="n">nImages</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Create TensorFlow Dataset object from the file namelist</span>
+    <span class="n">inFiles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/ML_ATB2/tensors/numbers/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SCRATCH&quot;</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inFiles</span>
+    <span class="p">]</span>
+    <span class="n">tr_data</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">inFiles</span><span class="p">))</span>
+
+    <span class="c1"># Convert the Dataset from file names to file contents</span>
+    <span class="n">tr_data</span> <span class="o">=</span> <span class="n">tr_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+        <span class="n">load_numbers_tensor</span><span class="p">,</span> <span class="n">num_parallel_calls</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">AUTOTUNE</span>
+    <span class="p">)</span>
+    <span class="c1"># Optimisation</span>
+    <span class="n">tr_data</span> <span class="o">=</span> <span class="n">tr_data</span><span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">AUTOTUNE</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tr_data</span>
+</pre></div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/rbcn.png" alt="Logo"/>
+            </a></p>
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../preface.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prepare_data.html">Preparing the input data</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../models/deep_convolutional_transcriber/index.html">1) A deep convolutional transcriber</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Authors and acknowledgements</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/ML_ATB2">Get the data</a></h3>
+
+<ul>
+<li><a href="https://github.com/philip-brohan/ML_ATB2"
+           rel="nofollow">Github repository</a></li>
+<li><a href="https://github.com/philip-brohan/ML_ATB2/archive/master.zip"
+           rel="nofollow">Zip file</a></li>
+</ul>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/ML_ATB2/issues/new">raise an issue</a>.
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../models/deep_convolutional_transcriber/index.html" title="A deep convolutional transcriber"
+             >next</a></li>
+        <li class="right" >
+          <a href="convert_all.html" title="Script to convert all the benchmark examples to tf.tensors"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ML_ATB2</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../prepare_data.html" >Process benchmark data into tensors for model building</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions that package all the benchmark tensors as tf.data.Datasets</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

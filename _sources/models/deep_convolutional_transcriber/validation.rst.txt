@@ -1,0 +1,5 @@
+Validation script for a deep convolutional transcriber model
+============================================================
+
+.. literalinclude:: ../../../models/deep_convolutional_transcriber/validation/compare_images.py
+

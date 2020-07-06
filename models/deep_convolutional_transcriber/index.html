@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A deep convolutional transcriber &#8212; Auto-transcription benchmark 2: ML approaches</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Specification for a deep convolutional transcriber model" href="transcriberModel.html" />
+    <link rel="prev" title="Functions that package all the benchmark tensors as tf.data.Datasets" href="../../data/files_to_dataset.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="transcriberModel.html" title="Specification for a deep convolutional transcriber model"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="../../data/files_to_dataset.html" title="Functions that package all the benchmark tensors as tf.data.Datasets"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ML_ATB2</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">A deep convolutional transcriber</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="a-deep-convolutional-transcriber">
+<h1>A deep convolutional transcriber<a class="headerlink" href="#a-deep-convolutional-transcriber" title="Permalink to this headline">¶</a></h1>
+<p>As a first attempt at a model which might do the transcription, I’m using a straightforward deep convolutional approach: Four 2x2 strided convolutional layers to reduce the dimension of the image, a single fully connected layer to extract the transcribed numbers from the convolutional features, and a softmax layer to express the predicted transcriptions as probabilities for each digit. With ELU activations, and dropout in each layer to resist overfitting.</p>
+<div class="figure align-center" id="id1" style="width: 95%">
+<a class="reference internal image-reference" href="../../_images/DCT.png"><img alt="../../_images/DCT.png" src="../../_images/DCT.png" style="width: 95%;" /></a>
+<p class="caption"><span class="caption-text">Schematic of the deep-convolutional transcriber model</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../data/files_to_dataset.html">Functions to provide training/test Dataset (common across models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transcriberModel.html">Model specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Model fit script</a></li>
+</ul>
+</div>
+<p>While far from perfect, this has considerable skill:</p>
+<div class="figure align-center" id="id2" style="width: 95%">
+<a class="reference internal image-reference" href="../../_images/compare.png"><img alt="../../_images/compare.png" src="../../_images/compare.png" style="width: 95%;" /></a>
+<p class="caption"><span class="caption-text">On the left, a test image from the benchmark (not part of the training dataset). On the right, the most-likely digit in each location from the deep-convolutional transcriber after 100 epochs training. Digits in blue are correct, in red mistakes.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Model validation script</a></li>
+</ul>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/rbcn.png" alt="Logo"/>
+            </a></p>
+<h3><a href="../../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../preface.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Preparing the input data</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1) A deep convolutional transcriber</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Authors and acknowledgements</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/ML_ATB2">Get the data</a></h3>
+
+<ul>
+<li><a href="https://github.com/philip-brohan/ML_ATB2"
+           rel="nofollow">Github repository</a></li>
+<li><a href="https://github.com/philip-brohan/ML_ATB2/archive/master.zip"
+           rel="nofollow">Zip file</a></li>
+</ul>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/ML_ATB2/issues/new">raise an issue</a>.
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="transcriberModel.html" title="Specification for a deep convolutional transcriber model"
+             >next</a></li>
+        <li class="right" >
+          <a href="../../data/files_to_dataset.html" title="Functions that package all the benchmark tensors as tf.data.Datasets"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ML_ATB2</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">A deep convolutional transcriber</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

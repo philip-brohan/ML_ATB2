@@ -9,6 +9,15 @@ This is an attempt to create such a tool: specifically it is an attempt to use t
    :maxdepth: 1
 
    Getting started <preface>
+   Preparing the input data <prepare_data>
+
+Then we can experiment with different model designs until we find one that is successful in transcription:
+
+.. toctree::
+   :maxdepth: 1
+
+   1) A deep convolutional transcriber <models/deep_convolutional_transcriber/index>
+
    
 .. toctree::
    :maxdepth: 1
