@@ -58,7 +58,7 @@ class transcriberModel(tf.keras.Model):
         self.map_to_op = tf.keras.layers.Dense(436 * 10,)
         # softmax to get digit probabilities at each location
         self.op_reshape = tf.keras.layers.Reshape(target_shape=(436, 10,))
-        self.op_softmax = tf.keras.layers.Softmax(axis=1)
+        self.op_softmax = tf.keras.layers.Softmax(axis=2)
 
     def call(self, inputs):
         x = self.conv1A(inputs)
