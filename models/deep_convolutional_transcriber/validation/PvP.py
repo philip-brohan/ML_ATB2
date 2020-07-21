@@ -26,6 +26,14 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--epoch", help="Epoch", type=int, required=False, default=25)
+# Set nimages to a small number for fast testing
+parser.add_argument(
+    "--nimages",
+    help="No of test cases to look at",
+    type=int,
+    required=False,
+    default=None,
+)
 args = parser.parse_args()
 
 # Set up the model and load the weights at the chosen epoch
@@ -39,8 +47,8 @@ load_status = transcriber.load_weights("%s/ckpt" % weights_dir)
 load_status.assert_existing_objects_matched()
 
 # Make the probability matrix
-testImages = getImageDataset(purpose="test", nImages=None)
-testNumbers = getNumbersDataset(purpose="test", nImages=None)
+testImages = getImageDataset(purpose="test", nImages=args.nimages)
+testNumbers = getNumbersDataset(purpose="test", nImages=args.nimages)
 testData = tf.data.Dataset.zip((testImages, testNumbers))
 count = numpy.zeros(10)
 pmatrix = numpy.zeros((10, 10))
@@ -61,6 +69,11 @@ def plot1(ax, d):
         fc = "red"
         if td == d:
             fc = "blue"
+        ax.add_patch(
+            matplotlib.patches.Rectangle(
+                (td - 0.25, 0), 0.5, 1, fill=True, facecolor=(0, 0, 0, 0.1)
+            )
+        )
         ax.add_patch(
             matplotlib.patches.Rectangle(
                 (td - 0.25, 0), 0.5, pmatrix[d, td], fill=True, facecolor=fc
@@ -99,7 +112,7 @@ for td in range(10):
         ax_digit.get_xaxis().set_ticks([])
     else:
         ax_digit.get_xaxis().set_ticks(range(10))
-        #ax_digit.set_xlabel("Transcribed choice")
+        # ax_digit.set_xlabel("Transcribed choice")
     ax_digit.get_yaxis().set_ticks([])
     ax_digit.set_ylabel("%1d  " % td, rotation=0)
     plot1(ax_digit, td)
