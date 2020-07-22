@@ -80,7 +80,7 @@ ax_full = fig.add_axes([0, 0, 1, 1])
 ax_full.set_xlim([0, 1])
 ax_full.set_ylim([0, 1])
 ax_full.add_patch(
-    matplotlib.patches.Rectangle((0, 0), 1, 1, fill=True, facecolor="white")
+    matplotlib.patches.Rectangle((0, 0), 1, 1, fill=True, facecolor=(.95,.95,.95,1))
 )
 
 ax_full.set_axis_off()
@@ -101,9 +101,6 @@ imp = {
     "fontSize": 10,
     "year": 1941,
 }
-ax_full.add_patch(
-    matplotlib.patches.Rectangle((0, 0), 1, 1, fill=True, facecolor="white")
-)
 
 # Box with the data in
 topLeft = (0.07 + imp["xshift"] / 768, 0.725 + imp["yshift"] / 1024)
