@@ -14,14 +14,14 @@
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/language_data.js"></script>
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Authors and acknowledgements" href="../../credits.html" />
+    <link rel="next" title="Training script for a deep convolutional transcriber model" href="training.html" />
     <link rel="prev" title="A deep convolutional transcriber" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../../credits.html" title="Authors and acknowledgements"
+          <a href="training.html" title="Training script for a deep convolutional transcriber model"
              accesskey="N">next</a></li>
         <li class="right" >
           <a href="index.html" title="A deep convolutional transcriber"
@@ -99,7 +99,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">map_to_op</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">436</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,)</span>
         <span class="c1"># softmax to get digit probabilities at each location</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">op_reshape</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Reshape</span><span class="p">(</span><span class="n">target_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">436</span><span class="p">,</span> <span class="mi">10</span><span class="p">,))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">op_softmax</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op_softmax</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv1A</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
@@ -170,7 +170,7 @@ Please <a href="https://github.com/philip-brohan/ML_ATB2/issues/new">raise an is
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../../credits.html" title="Authors and acknowledgements"
+          <a href="training.html" title="Training script for a deep convolutional transcriber model"
              >next</a></li>
         <li class="right" >
           <a href="index.html" title="A deep convolutional transcriber"
