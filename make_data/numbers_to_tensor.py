@@ -22,7 +22,7 @@ with open(
     mdata = pickle.load(pkf)
 
 
-# There are 10*12*3 = 360 digits/image, but we also want the monthly means
+# There are 10*12*3 = 360 digits/image, as well as the monthly means
 #  - an additional 12*3 - and the yearly totals - 10*4 => 436 digits
 
 # Target is a set of 10 probabilities - one for each digit 0-9 - for each number.
@@ -38,24 +38,13 @@ for yri in range(10):
             idx += 1
 # Add the monthly means
 for mni in range(12):
-    inr = 0.0
-    for yri in range(10):
-        inr += mdata[yri][mni][0] + mdata[yri][mni][1] / 10 + mdata[yri][mni][2] / 100
-    inr /= 10
-    inr = int(inr * 100)
-    for dgt in [int(x) for x in "%03d" % inr]:
-        target[idx, dgt] = 1.0
+    for ddx in range(3):
+        target[idx, mdata[10][mni][ddx]] = 1.0
         idx += 1
 # Add the annual totals
 for yri in range(10):
-    inr = 0.0
-    for mni in range(12):
-        inr += mdata[yri][mni][0] + mdata[yri][mni][1] / 10 + mdata[yri][mni][2] / 100
-    inr = int(inr * 100)
-    if inr > 9999: 
-        inr=0
-    for dgt in [int(x) for x in "%04d" % inr]:
-        target[idx, dgt] = 1.0
+    for ddx in range(4):
+        target[idx, mdata[11][yri][ddx]] = 1.0
         idx += 1
 
 ict = tf.convert_to_tensor(target, numpy.float32)
