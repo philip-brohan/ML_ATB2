@@ -13,12 +13,21 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Script to convert all the benchmark examples to tf.tensors" href="convert_all.html" />
+    <link rel="prev" title="Script to convert an image into a tf.tensor" href="image_to_tensor.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="convert_all.html" title="Script to convert all the benchmark examples to tf.tensors"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="image_to_tensor.html" title="Script to convert an image into a tf.tensor"
+             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">ML_ATB2</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../prepare_data.html" accesskey="U">Process benchmark data into tensors for model building</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Script to convert a pickled array of digits into a tf.tensor</a></li> 
       </ul>
     </div>  
@@ -54,7 +63,7 @@
     <span class="n">mdata</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pkf</span><span class="p">)</span>
 
 
-<span class="c1"># There are 10*12*3 = 360 digits/image, but we also want the monthly means</span>
+<span class="c1"># There are 10*12*3 = 360 digits/image, as well as the monthly means</span>
 <span class="c1">#  - an additional 12*3 - and the yearly totals - 10*4 =&gt; 436 digits</span>
 
 <span class="c1"># Target is a set of 10 probabilities - one for each digit 0-9 - for each number.</span>
@@ -70,24 +79,13 @@
             <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
 <span class="c1"># Add the monthly means</span>
 <span class="k">for</span> <span class="n">mni</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
-    <span class="n">inr</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="k">for</span> <span class="n">yri</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-        <span class="n">inr</span> <span class="o">+=</span> <span class="n">mdata</span><span class="p">[</span><span class="n">yri</span><span class="p">][</span><span class="n">mni</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">mdata</span><span class="p">[</span><span class="n">yri</span><span class="p">][</span><span class="n">mni</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">mdata</span><span class="p">[</span><span class="n">yri</span><span class="p">][</span><span class="n">mni</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
-    <span class="n">inr</span> <span class="o">/=</span> <span class="mi">10</span>
-    <span class="n">inr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inr</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">dgt</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="s2">&quot;</span><span class="si">%03d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">inr</span><span class="p">]:</span>
-        <span class="n">target</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">dgt</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">for</span> <span class="n">ddx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">target</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">mdata</span><span class="p">[</span><span class="mi">10</span><span class="p">][</span><span class="n">mni</span><span class="p">][</span><span class="n">ddx</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
 <span class="c1"># Add the annual totals</span>
 <span class="k">for</span> <span class="n">yri</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-    <span class="n">inr</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="k">for</span> <span class="n">mni</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
-        <span class="n">inr</span> <span class="o">+=</span> <span class="n">mdata</span><span class="p">[</span><span class="n">yri</span><span class="p">][</span><span class="n">mni</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">mdata</span><span class="p">[</span><span class="n">yri</span><span class="p">][</span><span class="n">mni</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">mdata</span><span class="p">[</span><span class="n">yri</span><span class="p">][</span><span class="n">mni</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
-    <span class="n">inr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inr</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">inr</span> <span class="o">&gt;</span> <span class="mi">9999</span><span class="p">:</span> 
-        <span class="n">inr</span><span class="o">=</span><span class="mi">0</span>
-    <span class="k">for</span> <span class="n">dgt</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="s2">&quot;</span><span class="si">%04d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">inr</span><span class="p">]:</span>
-        <span class="n">target</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">dgt</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">for</span> <span class="n">ddx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">target</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">mdata</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="n">yri</span><span class="p">][</span><span class="n">ddx</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
 
 <span class="n">ict</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
@@ -118,8 +116,12 @@
               <img class="logo" src="../_static/rbcn.png" alt="Logo"/>
             </a></p>
 <h3><a href="../index.html">Table Of Contents</a></h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../preface.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../prepare_data.html">Preparing the input data</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../models/deep_convolutional_transcriber/index.html">1) A deep convolutional transcriber</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../credits.html">Authors and acknowledgements</a></li>
@@ -143,7 +145,14 @@ Please <a href="https://github.com/philip-brohan/ML_ATB2/issues/new">raise an is
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="convert_all.html" title="Script to convert all the benchmark examples to tf.tensors"
+             >next</a></li>
+        <li class="right" >
+          <a href="image_to_tensor.html" title="Script to convert an image into a tf.tensor"
+             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">ML_ATB2</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../prepare_data.html" >Process benchmark data into tensors for model building</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Script to convert a pickled array of digits into a tf.tensor</a></li> 
       </ul>
     </div>

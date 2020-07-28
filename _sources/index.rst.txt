@@ -17,7 +17,7 @@ Then we can experiment with different model designs until we find one that is su
    :maxdepth: 1
 
    1) A deep convolutional transcriber <models/deep_convolutional_transcriber/index>
-
+   2) A tuned convolutional transcriber <models/tuned_convolutional_transcriber/index>
    
 .. toctree::
    :maxdepth: 1
