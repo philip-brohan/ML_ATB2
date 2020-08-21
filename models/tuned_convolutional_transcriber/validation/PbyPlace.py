@@ -80,7 +80,9 @@ ax_full = fig.add_axes([0, 0, 1, 1])
 ax_full.set_xlim([0, 1])
 ax_full.set_ylim([0, 1])
 ax_full.add_patch(
-    matplotlib.patches.Rectangle((0, 0), 1, 1, fill=True, facecolor=(.95,.95,.95,1))
+    matplotlib.patches.Rectangle(
+        (0, 0), 1, 1, fill=True, facecolor=(0.95, 0.95, 0.95, 1)
+    )
 )
 
 ax_full.set_axis_off()
