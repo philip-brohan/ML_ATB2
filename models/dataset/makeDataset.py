@@ -20,6 +20,14 @@ def load_numbers_tensor(file_name):
     return imt
 
 
+# Load an corners tensor from a file
+def load_corners_tensor(file_name):
+    sict = tf.io.read_file(file_name)
+    imt = tf.io.parse_tensor(sict, numpy.float32)
+    imt = tf.reshape(imt, [8])
+    return imt
+
+
 # Get an image tensors dataset - for 'training' or 'test'.
 #  Optionally specify how many images to use.
 def getImageDataset(purpose="training", nImages=None):
@@ -85,6 +93,40 @@ def getNumbersDataset(purpose="training", nImages=None):
     # Convert the Dataset from file names to file contents
     tr_data = tr_data.map(
         load_numbers_tensor, num_parallel_calls=tf.data.experimental.AUTOTUNE
+    )
+    # Optimisation
+    tr_data = tr_data.prefetch(tf.data.experimental.AUTOTUNE)
+
+
+# Get a corners tensors dataset - for 'training' or 'test'.
+#  Optionally specify how many images to use.
+def getCornersDataset(purpose="training", nImages=None):
+
+    # Get a list of filenames containing corners tensors
+    inFiles = os.listdir("%s/ML_ATB2/tensors/corners" % os.getenv("SCRATCH"))
+    splitI = int(len(inFiles) * 0.9)
+    if purpose == "training":
+        inFiles = inFiles[:splitI]
+    if purpose == "test":
+        inFiles = inFiles[splitI:]
+
+    if nImages is not None:
+        if len(inFiles) >= nImages:
+            inFiles = inFiles[0:nImages]
+        else:
+            raise ValueError(
+                "Only %d numbers available, can't provide %d" % (len(inFiles), nImages)
+            )
+
+    # Create TensorFlow Dataset object from the file namelist
+    inFiles = [
+        "%s/ML_ATB2/tensors/corners/%s" % (os.getenv("SCRATCH"), x) for x in inFiles
+    ]
+    tr_data = tf.data.Dataset.from_tensor_slices(tf.constant(inFiles))
+
+    # Convert the Dataset from file names to file contents
+    tr_data = tr_data.map(
+        load_corners_tensor, num_parallel_calls=tf.data.experimental.AUTOTUNE
     )
     # Optimisation
     tr_data = tr_data.prefetch(tf.data.experimental.AUTOTUNE)
