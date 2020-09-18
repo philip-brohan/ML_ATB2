@@ -1,4 +1,4 @@
-# Make tf.data.Datasets from the ATB2 fake image tensors and numbers tensors
+# Make tf.data.Datasets from the ATB2 fake data
 
 import os
 import tensorflow as tf
@@ -12,6 +12,14 @@ def load_image_tensor(file_name):
     return imt
 
 
+# Load an standardised image tensor from a file
+def load_standardised_tensor(file_name):
+    sict = tf.io.read_file(file_name)
+    imt = tf.io.parse_tensor(sict, numpy.float32)
+    imt = tf.reshape(imt, [512, 768, 3])
+    return imt
+
+
 # Load an numbers tensor from a file
 def load_numbers_tensor(file_name):
     sict = tf.io.read_file(file_name)
@@ -20,7 +28,7 @@ def load_numbers_tensor(file_name):
     return imt
 
 
-# Load an corners tensor from a file
+# Load a corners tensor from a file
 def load_corners_tensor(file_name):
     sict = tf.io.read_file(file_name)
     imt = tf.io.parse_tensor(sict, numpy.float32)
@@ -28,17 +36,33 @@ def load_corners_tensor(file_name):
     return imt
 
 
-# Get an image tensors dataset - for 'training' or 'test'.
-#  Optionally specify how many images to use.
-def getImageDataset(purpose="training", nImages=None):
+load_functions = {
+    "corners": load_corners_tensor,
+    "numbers": load_numbers_tensor,
+    "images": load_image_tensor,
+    "standardised": load_standardised_tensor,
+}
+
+# Get a dataset - images, numbers, corners, or standardised images
+def getDataset(group, purpose, selection=None, nImages=None):
+
+    supported = ("images", "numbers", "corners", "standardised")
+    if group not in supported:
+        raise ValueError("group must be one of %r." % supported)
 
     # Get a list of filenames containing image tensors
-    inFiles = os.listdir("%s/ML_ATB2/tensors/images" % os.getenv("SCRATCH"))
+    inFiles = os.listdir("%s/ML_ATB2/tensors/%s" % (os.getenv("SCRATCH"),group))
+
+    # do we want the training set, the test set, or a single sample
     splitI = int(len(inFiles) * 0.9)
     if purpose == "training":
         inFiles = inFiles[:splitI]
     if purpose == "test":
         inFiles = inFiles[splitI:]
+    if purpose == "sample":
+        if selection is None or selection > len(inFiles):
+            raise ValueError("Not enough files to get selection")
+        inFiles = [inFiles[selection]]
 
     if nImages is not None:
         if len(inFiles) >= nImages:
@@ -50,13 +74,13 @@ def getImageDataset(purpose="training", nImages=None):
 
     # Create TensorFlow Dataset object from the file namelist
     inFiles = [
-        "%s/ML_ATB2/tensors/images/%s" % (os.getenv("SCRATCH"), x) for x in inFiles
+        "%s/ML_ATB2/tensors/%s/%s" % (os.getenv("SCRATCH"), group, x) for x in inFiles
     ]
     tr_data = tf.data.Dataset.from_tensor_slices(tf.constant(inFiles))
 
     # Convert the Dataset from file names to file contents
     tr_data = tr_data.map(
-        load_image_tensor, num_parallel_calls=tf.data.experimental.AUTOTUNE
+        load_functions[group], num_parallel_calls=tf.data.experimental.AUTOTUNE
     )
     # Optimisation
     tr_data = tr_data.prefetch(tf.data.experimental.AUTOTUNE)
@@ -64,71 +88,21 @@ def getImageDataset(purpose="training", nImages=None):
     return tr_data
 
 
-# Get an numbers tensors dataset - for 'training' or 'test'.
-#  Optionally specify how many images to use.
-def getNumbersDataset(purpose="training", nImages=None):
+def getImageDataset(purpose="training", selection=None, nImages=None):
 
-    # Get a list of filenames containing numbers tensors
-    inFiles = os.listdir("%s/ML_ATB2/tensors/numbers" % os.getenv("SCRATCH"))
-    splitI = int(len(inFiles) * 0.9)
-    if purpose == "training":
-        inFiles = inFiles[:splitI]
-    if purpose == "test":
-        inFiles = inFiles[splitI:]
-
-    if nImages is not None:
-        if len(inFiles) >= nImages:
-            inFiles = inFiles[0:nImages]
-        else:
-            raise ValueError(
-                "Only %d numbers available, can't provide %d" % (len(inFiles), nImages)
-            )
-
-    # Create TensorFlow Dataset object from the file namelist
-    inFiles = [
-        "%s/ML_ATB2/tensors/numbers/%s" % (os.getenv("SCRATCH"), x) for x in inFiles
-    ]
-    tr_data = tf.data.Dataset.from_tensor_slices(tf.constant(inFiles))
-
-    # Convert the Dataset from file names to file contents
-    tr_data = tr_data.map(
-        load_numbers_tensor, num_parallel_calls=tf.data.experimental.AUTOTUNE
-    )
-    # Optimisation
-    tr_data = tr_data.prefetch(tf.data.experimental.AUTOTUNE)
+    return getDataset("images", purpose, selection=selection, nImages=nImages)
 
 
-# Get a corners tensors dataset - for 'training' or 'test'.
-#  Optionally specify how many images to use.
-def getCornersDataset(purpose="training", nImages=None):
+def getNumbersDataset(purpose="training", selection=None, nImages=None):
 
-    # Get a list of filenames containing corners tensors
-    inFiles = os.listdir("%s/ML_ATB2/tensors/corners" % os.getenv("SCRATCH"))
-    splitI = int(len(inFiles) * 0.9)
-    if purpose == "training":
-        inFiles = inFiles[:splitI]
-    if purpose == "test":
-        inFiles = inFiles[splitI:]
+    return getDataset("numbers", purpose, selection=selection, nImages=nImages)
 
-    if nImages is not None:
-        if len(inFiles) >= nImages:
-            inFiles = inFiles[0:nImages]
-        else:
-            raise ValueError(
-                "Only %d numbers available, can't provide %d" % (len(inFiles), nImages)
-            )
 
-    # Create TensorFlow Dataset object from the file namelist
-    inFiles = [
-        "%s/ML_ATB2/tensors/corners/%s" % (os.getenv("SCRATCH"), x) for x in inFiles
-    ]
-    tr_data = tf.data.Dataset.from_tensor_slices(tf.constant(inFiles))
+def getCornersDataset(purpose="training", selection=None, nImages=None):
 
-    # Convert the Dataset from file names to file contents
-    tr_data = tr_data.map(
-        load_corners_tensor, num_parallel_calls=tf.data.experimental.AUTOTUNE
-    )
-    # Optimisation
-    tr_data = tr_data.prefetch(tf.data.experimental.AUTOTUNE)
+    return getDataset("corners", purpose, selection=selection, nImages=nImages)
 
-    return tr_data
+
+def getStandardisedDataset(purpose="training", selection=None, nImages=None):
+
+    return getDataset("standardised", purpose, selection=selection, nImages=nImages)
