@@ -21,7 +21,7 @@ nTrainingImages = 9000  # Max is 9000
 nTestImages = 1000  # Max is 1000
 
 # How many epochs to train for
-nEpochs = 50
+nEpochs = 150
 # Length of an epoch - if None, same as nTrainingImages
 nImagesInEpoch = 9000
 
@@ -71,7 +71,7 @@ class CustomSaver(tf.keras.callbacks.Callback):
 # Train the transcriber
 seeker.compile(
     optimizer=tf.keras.optimizers.Adadelta(
-        learning_rate=1e-02, rho=0.95, epsilon=1e-07, name="Adadelta"
+        learning_rate=1e-01, rho=0.95, epsilon=1e-07, name="Adadelta"
     ),
     loss=tf.keras.losses.MeanSquaredError(),
 )

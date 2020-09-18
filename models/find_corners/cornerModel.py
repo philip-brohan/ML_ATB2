@@ -17,25 +17,29 @@ class cornerModel(tf.keras.Model):
         super(cornerModel, self).__init__()
         # Initial shape (1024,768,3)
         self.conv1A = tf.keras.layers.Conv2D(
-            10, (3, 3), strides=(2, 2), padding="valid"
+            20, (3, 3), strides=(2, 2), padding="valid"
         )
+        self.drop1A = tf.keras.layers.Dropout(0.5)
         self.act1A = tf.keras.layers.ELU()
         # Now (512,384,10)
         self.conv1B = tf.keras.layers.Conv2D(
-            10, (3, 3), strides=(2, 2), padding="valid"
+            40, (3, 3), strides=(2, 2), padding="valid"
         )
         self.act1B = tf.keras.layers.ELU()
+        self.drop1b = tf.keras.layers.Dropout(0.5)
         # reshape to 1d
         self.flatten = tf.keras.layers.Flatten()
         # map directly to output format (8 coordinates)
         self.map_to_op = tf.keras.layers.Dense(
-            8, kernel_regularizer=tf.keras.regularizers.l1(0.000001)
+            8, 
         )
 
     def call(self, inputs):
         x = self.conv1A(inputs)
+        x = self.drop1A(x)
         x = self.act1A(x)
         x = self.conv1B(x)
+        x = self.drop1A(x)
         x = self.act1B(x)
         x = self.flatten(x)
         x = self.map_to_op(x)
