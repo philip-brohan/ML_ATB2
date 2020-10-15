@@ -1,5 +1,12 @@
 # Make tf.data.Datasets from the ATB2 fake data
 
+# Note - there is a bug in tensorFlow (#24520) which means you have to explicitly set
+#  the shape of a tensor after reading it in.
+# Until this is fixed the tensor sizes are explicitly set in these functions
+#  which means we need a new script file for every input shape.
+
+# The tf.reshape lines are the only things that change between versions.
+
 import os
 import tensorflow as tf
 import numpy
@@ -8,7 +15,7 @@ import numpy
 def load_image_tensor(file_name):
     sict = tf.io.read_file(file_name)
     imt = tf.io.parse_tensor(sict, numpy.float32)
-    imt = tf.reshape(imt, [1024, 768, 3])
+    imt = tf.reshape(imt, [36, 48, 3])
     return imt
 
 
@@ -24,7 +31,7 @@ def load_standardised_tensor(file_name):
 def load_numbers_tensor(file_name):
     sict = tf.io.read_file(file_name)
     imt = tf.io.parse_tensor(sict, numpy.float32)
-    imt = tf.reshape(imt, [436, 10])
+    imt = tf.reshape(imt, [3, 10])
     return imt
 
 
