@@ -88,10 +88,7 @@ def getDataset(group, purpose, selection=None, nImages=None, subdir=None):
             )
 
     # Create TensorFlow Dataset object from the file namelist
-    inFiles = [
-        "%s/tensors/%s/%s" % (dirBase(subdir), group, x)
-        for x in inFiles
-    ]
+    inFiles = ["%s/tensors/%s/%s" % (dirBase(subdir), group, x) for x in inFiles]
     tr_data = tf.data.Dataset.from_tensor_slices(tf.constant(inFiles))
 
     # Convert the Dataset from file names to file contents

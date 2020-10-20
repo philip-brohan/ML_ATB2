@@ -36,8 +36,17 @@ def load_corners_tensor(file_name):
     return imt
 
 
+# Load a corners tensor from a file
+def load_grid_tensor(file_name):
+    sict = tf.io.read_file(file_name)
+    imt = tf.io.parse_tensor(sict, numpy.float32)
+    imt = tf.reshape(imt, [286])
+    return imt
+
+
 load_functions = {
     "corners": load_corners_tensor,
+    "cell-corners": load_grid_tensor,
     "numbers": load_numbers_tensor,
     "images": load_image_tensor,
     "standardised": load_standardised_tensor,
@@ -54,7 +63,7 @@ def dirBase(subdir):
 # Get a dataset - images, numbers, corners, or standardised images
 def getDataset(group, purpose, selection=None, nImages=None, subdir=None):
 
-    supported = ("images", "numbers", "corners", "standardised")
+    supported = ("images", "numbers", "corners", "cell-corners", "standardised")
     if group not in supported:
         raise ValueError("group must be one of %r." % supported)
 
@@ -81,10 +90,7 @@ def getDataset(group, purpose, selection=None, nImages=None, subdir=None):
             )
 
     # Create TensorFlow Dataset object from the file namelist
-    inFiles = [
-        "%s/tensors/%s/%s" % (dirBase(subdir), group, x)
-        for x in inFiles
-    ]
+    inFiles = ["%s/tensors/%s/%s" % (dirBase(subdir), group, x) for x in inFiles]
     tr_data = tf.data.Dataset.from_tensor_slices(tf.constant(inFiles))
 
     # Convert the Dataset from file names to file contents
@@ -115,6 +121,13 @@ def getCornersDataset(purpose="training", selection=None, nImages=None, subdir=N
 
     return getDataset(
         "corners", purpose, selection=selection, nImages=nImages, subdir=subdir
+    )
+
+
+def getGridDataset(purpose="training", selection=None, nImages=None, subdir=None):
+
+    return getDataset(
+        "cell-corners", purpose, selection=selection, nImages=nImages, subdir=subdir
     )
 
 
