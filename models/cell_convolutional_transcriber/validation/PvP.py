@@ -38,10 +38,9 @@ args = parser.parse_args()
 
 # Set up the model and load the weights at the chosen epoch
 transcriber = transcriberModel()
-weights_dir = ("%s/ML_ATB2/boxes/models/deep_convolutional_transcriber/" + "Epoch_%04d") % (
-    os.getenv("SCRATCH"),
-    args.epoch - 1,
-)
+weights_dir = (
+    "%s/ML_ATB2/boxes/models/deep_convolutional_transcriber/" + "Epoch_%04d"
+) % (os.getenv("SCRATCH"), args.epoch - 1,)
 load_status = transcriber.load_weights("%s/ckpt" % weights_dir)
 # Check the load worked
 load_status.assert_existing_objects_matched()

@@ -23,14 +23,14 @@ nTestImages = 1000  # Max is 1000
 # How many epochs to train for
 nEpochs = 200
 # Length of an epoch - if None, same as nTrainingImages
-nImagesInEpoch = 1000
+nImagesInEpoch = 2000
 
 if nImagesInEpoch is None:
     nImagesInEpoch = nTrainingImages
 
 # Dataset parameters
 bufferSize = 100  # Shouldn't make much difference
-batchSize = 1  # Bigger is faster, but takes more memory, and probably is less accurate
+batchSize = 50  # Bigger is faster, but takes more memory, and probably is less accurate
 
 # Set up the training data
 imageData = getImageDataset(
