@@ -14,7 +14,7 @@ for doci in range(10000):
         "%s/ML_ATB2/tensors/standardised/%04d.tfd" % (os.getenv("SCRATCH"), doci)
     ):
         continue
-    cmd = "./deskew_image.py --image=%d \n" % doci
+    cmd = "./deskew_image.py --image=%d --epoch=150\n" % doci
     f.write(cmd)
 
 f.close()

@@ -109,7 +109,7 @@ for yrl in range(0, 11):
         y = (
             1.0
             - mdata.yearHeight
-            - (mdx * (1.0 - mdata.yearHeight - mdata.totalsHeight) / 13)
+            - ((mdx+1) * (1.0 - mdata.yearHeight - mdata.totalsHeight) / 13)
         )
         gp = (bm[0] * y + tp[0] * (1 - y), bm[1] * y + tp[1] * (1 - y))
         target.extend(gp)
