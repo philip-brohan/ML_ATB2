@@ -30,8 +30,8 @@ class AttrDict(dict):
 
 mdata = AttrDict(mdata)
 
-# From the metadata, find the corners of the data grid
-#  (143 floats on the range 0-1)
+# From the metadata, find the centres of the data grid
+#  (120*2 floats on the range 0-1)
 # Functions copied from the ATB2 image class - should reuse that class instead
 
 # Rotate by angle degrees clockwise
@@ -99,25 +99,32 @@ def bottomAt(self, x):
         bottomRight(self)[1] * x + bottomLeft(self)[1] * (1 - x),
     )
 
+def leftAt(self, y):
+    return (
+        topLeft(self)[0] * y + bottomLeft(self)[0] * (1 - y),
+        topLeft(self)[1] * y + bottomLeft(self)[1] * (1 - y),
+    )
 
 target = []
-for yrl in range(0, 11):
-    x = mdata.monthsWidth + yrl * (1.0 - mdata.meansWidth - mdata.monthsWidth) / 10
-    tp = gRotate(mdata, topAt(mdata, x))
-    bm = gRotate(mdata, bottomAt(mdata, x))
-    for mdx in range(0, 13):
-        y = (
+for yri in range(10):
+    x = (
+        mdata.monthsWidth
+        + (yri + 0.5) * (1.0 - mdata.meansWidth - mdata.monthsWidth) / 10
+    )
+    tp = topAt(mdata,x)
+    for mni in range(12):
+        lft = leftAt(mdata,
             1.0
             - mdata.yearHeight
-            - ((mdx+1) * (1.0 - mdata.yearHeight - mdata.totalsHeight) / 13)
+            - (mni + 1) * (1.0 - mdata.yearHeight - mdata.totalsHeight) / (12 + 1)
         )
-        gp = (bm[0] * y + tp[0] * (1 - y), bm[1] * y + tp[1] * (1 - y))
-        target.extend(gp)
+        txp = gRotate(mdata,[tp[0], lft[1]])
+        target.extend(txp)
 
 ict = tf.convert_to_tensor(target, numpy.float32)
 
 # Output the tensor
-opdir = "%s/ML_ATB2/tensors/cell-corners/" % os.getenv("SCRATCH")
+opdir = "%s/ML_ATB2/tensors/cell-centres/" % os.getenv("SCRATCH")
 if not os.path.isdir(opdir):
     try:  # These calls sometimes collide
         os.makedirs(opdir)

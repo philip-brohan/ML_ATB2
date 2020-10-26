@@ -15,7 +15,7 @@ f = open("run_g2t.sh", "w+")
 
 for doci in range(10000):
     if os.path.isfile(
-        "%s/ML_ATB2/tensors/cell-corners/%04d.tfd" % (os.getenv("SCRATCH"), doci)
+        "%s/ML_ATB2/tensors/cell-centres/%04d.tfd" % (os.getenv("SCRATCH"), doci)
     ):
         continue
     cmd = ('./metadata_to_grid_tensor.py --docn="%04d"\n') % doci
