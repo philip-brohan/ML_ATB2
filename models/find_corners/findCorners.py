@@ -8,6 +8,14 @@ import tensorflow as tf
 import pickle
 import numpy
 
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--epoch", help="Restart from epoch", type=int, required=False, default=0
+)
+args = parser.parse_args()
+
 # Load the data source providers
 sys.path.append("%s/../dataset" % os.path.dirname(__file__))
 from makeDataset import getImageDataset
@@ -21,7 +29,7 @@ nTrainingImages = 9000  # Max is 9000
 nTestImages = 1000  # Max is 1000
 
 # How many epochs to train for
-nEpochs = 150
+nEpochs = 500
 # Length of an epoch - if None, same as nTrainingImages
 nImagesInEpoch = 9000
 
@@ -30,7 +38,7 @@ if nImagesInEpoch is None:
 
 # Dataset parameters
 bufferSize = 100  # Shouldn't make much difference
-batchSize = 1  # Bigger is faster, but takes more memory, and probably is less accurate
+batchSize = 32  #
 
 # Set up the training data
 imageData = getImageDataset(purpose="training", nImages=nTrainingImages).repeat()
@@ -46,6 +54,16 @@ testData = testData.batch(batchSize)
 
 # Instantiate the model
 seeker = cornerModel()
+
+# If we are doing a restart, load the weights
+if args.epoch > 0:
+    weights_dir = ("%s/ML_ATB2/models/find_corners/" + "Epoch_%04d") % (
+        os.getenv("SCRATCH"),
+        args.epoch - 1,
+    )
+    load_status = seeker.load_weights("%s/ckpt" % weights_dir)
+    # Check the load worked
+    load_status.assert_existing_objects_matched()
 
 # Save the model weights and the history state after every epoch
 history = {}
@@ -73,11 +91,12 @@ seeker.compile(
     optimizer=tf.keras.optimizers.Adadelta(
         learning_rate=1e-01, rho=0.95, epsilon=1e-07, name="Adadelta"
     ),
-    loss=tf.keras.losses.MeanSquaredError(),
+    loss=tf.keras.losses.MeanAbsoluteError(),
 )
 history = seeker.fit(
     x=trainingData,
     epochs=nEpochs,
+    initial_epoch=args.epoch,
     steps_per_epoch=nImagesInEpoch // batchSize,
     validation_data=testData,
     validation_steps=nTestImages // batchSize,

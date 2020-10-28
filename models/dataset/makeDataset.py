@@ -32,21 +32,21 @@ def load_numbers_tensor(file_name):
 def load_corners_tensor(file_name):
     sict = tf.io.read_file(file_name)
     imt = tf.io.parse_tensor(sict, numpy.float32)
-    imt = tf.reshape(imt, [8])
+    imt = tf.reshape(imt, [44])
     return imt
 
 
-# Load a corners tensor from a file
+# Load a grid tensor from a file
 def load_grid_tensor(file_name):
     sict = tf.io.read_file(file_name)
     imt = tf.io.parse_tensor(sict, numpy.float32)
-    imt = tf.reshape(imt, [286])
+    imt = tf.reshape(imt, [240])
     return imt
 
 
 load_functions = {
     "corners": load_corners_tensor,
-    "cell-corners": load_grid_tensor,
+    "cell-centres": load_grid_tensor,
     "numbers": load_numbers_tensor,
     "images": load_image_tensor,
     "standardised": load_standardised_tensor,
@@ -63,7 +63,7 @@ def dirBase(subdir):
 # Get a dataset - images, numbers, corners, or standardised images
 def getDataset(group, purpose, selection=None, nImages=None, subdir=None):
 
-    supported = ("images", "numbers", "corners", "cell-corners", "standardised")
+    supported = ("images", "numbers", "corners", "cell-centres", "standardised")
     if group not in supported:
         raise ValueError("group must be one of %r." % supported)
 
@@ -127,7 +127,7 @@ def getCornersDataset(purpose="training", selection=None, nImages=None, subdir=N
 def getGridDataset(purpose="training", selection=None, nImages=None, subdir=None):
 
     return getDataset(
-        "cell-corners", purpose, selection=selection, nImages=nImages, subdir=subdir
+        "cell-centres", purpose, selection=selection, nImages=nImages, subdir=subdir
     )
 
 

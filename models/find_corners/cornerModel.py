@@ -29,9 +29,9 @@ class cornerModel(tf.keras.Model):
         self.drop1b = tf.keras.layers.Dropout(0.5)
         # reshape to 1d
         self.flatten = tf.keras.layers.Flatten()
-        # map directly to output format (8 coordinates)
+        # map directly to output format (22 coordinates)
         self.map_to_op = tf.keras.layers.Dense(
-            8, 
+            44, 
         )
 
     def call(self, inputs):

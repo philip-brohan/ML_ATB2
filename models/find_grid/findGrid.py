@@ -33,7 +33,7 @@ nTrainingImages = 9000  # Max is 9000
 nTestImages = 1000  # Max is 1000
 
 # How many epochs to train for
-nEpochs = 150
+nEpochs = 500
 # Length of an epoch - if None, same as nTrainingImages
 nImagesInEpoch = 9000
 
@@ -42,7 +42,7 @@ if nImagesInEpoch is None:
 
 # Dataset parameters
 bufferSize = 100  # Shouldn't make much difference
-batchSize = 10  # Best results probably around 32, but smaller to use less memory
+batchSize = 32  # Best results probably around 32
 
 # Set up the training data
 imageData = getImageDataset(purpose="training", nImages=nTrainingImages).repeat()
@@ -96,7 +96,7 @@ seeker.compile(
     optimizer=tf.keras.optimizers.Adadelta(
         learning_rate=1e-01, rho=0.95, epsilon=1e-07, name="Adadelta"
     ),
-    loss=tf.keras.losses.MeanSquaredError(),
+    loss=tf.keras.losses.MeanAbsoluteError(),
 )
 history = seeker.fit(
     x=trainingData,

@@ -89,13 +89,13 @@ ax_original.imshow(
     interpolation="nearest",
 )
 cset = original[0, :]
-for point in range(4):
+for point in range(22):
     ax_original.add_patch(
         matplotlib.patches.Circle(
             (cset[point * 2] * 768, (1 - cset[point * 2 + 1]) * 1024),
             radius=10,
-            facecolor=fc[point],
-            edgecolor=fc[point],
+            facecolor='red',
+            edgecolor='red',
             linewidth=0.1,
             alpha=0.8,
         )
@@ -114,13 +114,13 @@ ax_encoded.imshow(
 )
 
 cset = encoded[0, :]
-for point in range(4):
+for point in range(22):
     ax_encoded.add_patch(
         matplotlib.patches.Circle(
             (cset[point * 2] * 768, (1 - cset[point * 2 + 1]) * 1024),
             radius=10,
-            facecolor=fc[point],
-            edgecolor=fc[point],
+            facecolor='red',
+            edgecolor='red',
             linewidth=0.1,
             alpha=0.8,
         )

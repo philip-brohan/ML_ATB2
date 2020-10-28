@@ -58,9 +58,9 @@ class gridModel(tf.keras.Model):
             56,kernel_regularizer=tf.keras.regularizers.l1(0.000001)
         )
         self.actm1 = tf.keras.layers.ELU()        
-        # map directly to output format (286 coordinates)
+        # map directly to output format (240 coordinates)
         self.map_to_op = tf.keras.layers.Dense(
-            286,kernel_regularizer=tf.keras.regularizers.l1(0.000001)
+            240,kernel_regularizer=tf.keras.regularizers.l1(0.000001)
         )
         # Want float32 output even if using lower precision
         self.opl = tf.keras.layers.Activation('linear',dtype='float32')
